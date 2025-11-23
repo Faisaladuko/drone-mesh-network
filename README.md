@@ -13,14 +13,34 @@ A Python-based simulation of a mobile ad-hoc mesh network for drones with live v
   - Active neighbor links
   - Network statistics (packets delivered, latency, hop counts)
 
+## Project Structure
+
+The project is organized into modular components:
+
+```
+├── main.py            # Entry point for running the simulation
+├── config.py          # Simulation configuration parameters
+├── messages.py        # Message types (HELLO, DV, DATA)
+├── channel.py         # Wireless channel simulation
+├── routing.py         # Distance vector routing logic
+├── drone_node.py      # Drone node implementation
+├── simulation.py      # Simulation coordinator
+├── visualization.py   # Live Matplotlib visualization
+└── README.md          # This file
+```
+
 ## Configuration
 
-Key simulation parameters (in `SIM_CONFIG`):
+Key simulation parameters (in `config.py`):
 - **Nodes**: 14 drones
 - **World Size**: 900m × 620m
 - **Communication Range**: 230 meters
 - **Simulation Time**: 35 seconds
 - **Speed**: 10-22 m/s
+- **HELLO Period**: 0.6 seconds
+- **DV Update Period**: 1.2 seconds
+
+Modify `config.py` to customize simulation parameters.
 
 ## Requirements
 
@@ -35,7 +55,7 @@ Python 3.7+ required (uses asyncio and dataclasses)
 Run the simulation with live visualization:
 
 ```bash
-python drone.py
+python main.py
 ```
 
 The visualization displays:
@@ -45,11 +65,12 @@ The visualization displays:
 
 ## How It Works
 
-1. **Mobility**: Drones move autonomously between random waypoints
-2. **Discovery**: Periodic HELLO broadcasts detect neighbors within range
-3. **Routing**: Distance vector protocol builds routing tables for multi-hop paths
-4. **Data Transfer**: Application layer generates random data packets between drone pairs
-5. **Visualization**: Updates in real-time showing network topology and performance
+1. **Mobility** (`drone_node.py`): Drones move autonomously between random waypoints
+2. **Discovery** (`drone_node.py`): Periodic HELLO broadcasts detect neighbors within range
+3. **Routing** (`routing.py`): Distance vector protocol builds routing tables for multi-hop paths
+4. **Channel** (`channel.py`): Simulates wireless propagation with range limits and realistic delays
+5. **Data Transfer** (`drone_node.py`): Application layer generates random data packets between drone pairs
+6. **Visualization** (`visualization.py`): Updates in real-time showing network topology and performance
 
 ## Simulation Output
 
@@ -58,3 +79,17 @@ The simulation tracks:
 - End-to-end latency
 - Hop counts for multi-hop routes
 - Network connectivity changes over time
+- Per-node statistics and routing tables
+
+## Architecture
+
+### Modules
+
+- **config.py**: Centralized configuration with all simulation parameters
+- **messages.py**: Dataclass definitions for network messages
+- **channel.py**: Simulates wireless medium with distance-based range checking and propagation delays
+- **routing.py**: Implements Bellman-Ford distance vector routing algorithm
+- **drone_node.py**: Core node logic including mobility, neighbor discovery, routing, and data forwarding
+- **simulation.py**: Orchestrates the simulation lifecycle and collects metrics
+- **visualization.py**: Real-time Matplotlib animation with network statistics
+- **main.py**: Entry point that initializes and runs the simulation
