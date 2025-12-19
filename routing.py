@@ -1,22 +1,16 @@
-"""
-Distance Vector Routing for Drone Mesh Network
-"""
-
-import time
 from dataclasses import dataclass
 from typing import Dict, Tuple
+import time
 
 
 @dataclass
 class Route:
-    """Routing table entry"""
     cost: float
     next_hop: int
     updated_at: float
 
 
 def ensure_one_hop(rt: Dict[int, Route], neighbor_id: int, *, log: bool = False):
-    """Ensure a direct neighbor has a 1-hop route in the routing table"""
     now = time.time()
     old = rt.get(neighbor_id)
     if old is None or old.cost > 1.0:
@@ -33,11 +27,7 @@ def apply_distance_vector(
     *,
     log: bool = False,
 ):
-    """
-    Apply Bellman-Ford relaxation to routing table.
-    Updates routes based on distance vector received from a neighbor.
-    cost_via_src = 1 + their_cost
-    """
+    """Bellman-Ford relaxation: cost_via_src = 1 + their_cost."""
     ensure_one_hop(rt, src, log=log)
     now = time.time()
     for dest, (their_cost, _nh) in their_vector.items():
